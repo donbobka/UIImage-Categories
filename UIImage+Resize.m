@@ -80,12 +80,12 @@
           transparentBorder:(NSUInteger)borderSize
                cornerRadius:(NSUInteger)cornerRadius
        interpolationQuality:(CGInterpolationQuality)quality {
-
+    
     UIImage *resizedImage = [self resizedImageWithContentMode:UIViewContentModeScaleAspectFill
                                                        bounds:CGSizeMake(thumbnailSize, thumbnailSize)
                                          interpolationQuality:quality];
     
-
+    
     // Crop out any part of the image that's larger than the thumbnail size
     // The cropped rect must be centered on the resized image
     // Round the origin points so that the size isn't altered when CGRectIntegral is later invoked
@@ -130,12 +130,12 @@
         case UIImageOrientationLeftMirrored:
         case UIImageOrientationRight:
         case UIImageOrientationRightMirrored:
-	    drawTransposed = YES;
-	    break;
+            drawTransposed = YES;
+            break;
         default:
-	    drawTransposed = NO;
+            drawTransposed = NO;
     }
-        
+    
     CGAffineTransform transform = [self transformForOrientation:newSize];
     
     return [self resizedImage:newSize transform:transform drawTransposed:drawTransposed interpolationQuality:quality];
@@ -160,7 +160,7 @@
             break;
             
         default:
-            [NSException raise:NSInvalidArgumentException format:@"Unsupported content mode: %d", contentMode];
+            [NSException raise:NSInvalidArgumentException format:@"Unsupported content mode: %d", (int)contentMode];
     }
     
     CGSize newSize = CGSizeMake(self.size.width * ratio, self.size.height * ratio);
@@ -183,10 +183,10 @@
     CGRect transposedRect = CGRectMake(0, 0, newRect.size.height, newRect.size.width);
     CGImageRef imageRef = self.CGImage;
     
-    // Fix for a colorspace / transparency issue that affects some types of 
+    // Fix for a colorspace / transparency issue that affects some types of
     // images. See here: http://vocaro.com/trevor/blog/2009/10/12/resize-a-uiimage-the-right-way/comment-page-2/#comment-39951
-        
-	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGContextRef bitmap = CGBitmapContextCreate(
                                                 NULL,
                                                 newRect.size.width,
@@ -194,10 +194,10 @@
                                                 8, /* bits per channel */
                                                 (newRect.size.width * 4), /* 4 channels per pixel * numPixels/row */
                                                 colorSpace,
-                                                kCGImageAlphaPremultipliedLast
+                                                kCGBitmapAlphaInfoMask & kCGImageAlphaPremultipliedLast
                                                 );
     CGColorSpaceRelease(colorSpace);
-	
+    
     // Rotate and/or flip the image if required by its orientation
     CGContextConcatCTM(bitmap, transform);
     
